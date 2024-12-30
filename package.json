@@ -2,9 +2,10 @@
   "name": "econmerce_template",
   "version": "1.0.0",
   "description": "main oackage",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start_react": "cd client && npm start",
+    "build_react": "cd client && npm run build"
   },
   "author": "",
   "license": "ISC"
