@@ -129,10 +129,12 @@ app.use(async function (req, res, next) {
   }
 });
 
-var user = require("./Routes/userapi_routes.js");
+const user = require("./Routes/userapi_routes.js");
+const authRouter = require("./Routes/authRoutes");
 app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 app.use("/", (req, res) => res.send("Hello World!"));
 app.use("/userExpress", user);
+app.use("/auth", authRouter);
 
 app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname, "..", "build", "index.html"));
