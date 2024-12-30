@@ -4,7 +4,7 @@ const { promisify } = require("util");
 const oauth2Client = require("../utils/oauth2client");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
-const User = require("../models/userModel");
+const User = require("../Model/User");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -56,14 +56,15 @@ exports.googleAuth = catchAsync(async (req, res, next) => {
   );
 
   let user = await User.findOne({ email: userRes.data.email });
-
+  console.log("USER -> ", user);
   if (!user) {
     console.log("New User found");
-    user = await User.create({
-      name: userRes.data.name,
-      email: userRes.data.email,
-      image: userRes.data.picture,
-    });
+
+    // user = await User.create({
+    //   name: userRes.data.name,
+    //   email: userRes.data.email,
+    //   //   image: userRes.data.picture,
+    // });
   }
 
   createSendToken(user, 201, res);

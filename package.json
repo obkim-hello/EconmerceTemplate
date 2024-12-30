@@ -4,9 +4,14 @@
   "description": "main oackage",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start_react": "cd client && npm start",
-    "build_react": "cd client && npm run build"
+    "start_client": "cd client && npm start",
+    "build_client": "cd client && npm run build",
+    "start_server": "cd server && npx nodemon server.js",
+    "dev": "concurrently \"npm run start_server\" \"npm run start_client\""
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^9.1.1"
+  }
 }

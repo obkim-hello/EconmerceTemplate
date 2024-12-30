@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import React from "react";
 import { useGoogleLogin } from "@react-oauth/google";
-import { googleAuth } from "../services/api";
+import { googleAuth } from "../../service/google";
                               
 
 export default (props) => {

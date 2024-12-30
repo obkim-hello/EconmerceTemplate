@@ -1,25 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+// import logo from "./logo.svg";
+import "./App.css";
+import React, { useEffect, useState } from "react";
+import "./App.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import GoogleLogin from "./components/GoogleLogin/GoogleLogin";
+import { Provider } from "react-redux";
+import PubRoutes from "./routes/pubRoutes";
+import globalStore from "./store/globalStore";
+import axios from "axios";
+axios.defaults.withCredentials = true;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Provider store={globalStore}>
+      <PubRoutes />
+    </Provider>
   );
 }
 
 export default App;
+
+{
+  /* <GoogleOAuthProvider clientId="163584497548-6uovpebrvioqdepje90dinuagvi60ulc.apps.googleusercontent.com">
+          <div className="App">
+            <GoogleLogin setUser={setUser}></GoogleLogin>
+            {user && user.name}
+            {user && user.email}
+          </div>
+        </GoogleOAuthProvider> */
+}
