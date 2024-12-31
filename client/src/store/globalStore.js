@@ -1,15 +1,24 @@
 // import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { sessionReducer, sessionService } from "redux-react-session";
+import cartReducer, { getTotals } from "./cartSlice";
+import storage from "redux-persist/lib/storage";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 
-// import rootReducer from "./reducers";
-
-// const persistConfig = {
-//   key: "root",
-//   storage,
-// };
-
-// const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistConfig = {
+  key: "root",
+  storage,
+};
+const persistedCartReducer = persistReducer(persistConfig, cartReducer);
 
 let mainReducer = function (state = {}, action) {
   switch (action.type) {
@@ -31,18 +40,19 @@ let defaultState = {
     loginType: "",
   },
 };
-const globalStore = configureStore(
+const store = configureStore(
   {
     reducer: {
-      // persistedReducer,
       main: mainReducer,
       session: sessionReducer,
-      // orderHistory: orderHistoryReducer,
+      cart: persistedCartReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         immutableCheck: false,
-        serializableCheck: false,
+        serializableCheck: {
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        },
       }),
   },
   defaultState,
@@ -62,5 +72,9 @@ const options = {
   validateSession,
 };
 
-sessionService.initSessionService(globalStore, options);
-export default globalStore;
+// globalStore.dispatch(getTotals());
+
+sessionService.initSessionService(store, options);
+export const globalStore = store;
+
+export const persistor = persistStore(store);
