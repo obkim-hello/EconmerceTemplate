@@ -56,6 +56,7 @@ app.use(async function (req, res, next) {
     "token_validation_check",
     "token",
     "validateResetToken",
+    "auth",
   ];
   var isInWhitelist = false;
   for (var i = 0; i < whitelist.length; i++) {

@@ -1,9 +1,9 @@
 import React from "react";
-import { Route, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import SessionTimeout from "./SessionTimeout";
 //location.pathname to get next link
 
-const param = new URLSearchParams(window.location.pathname).get("next");
+// const param = new URLSearchParams(window.location.pathname).get("next");
 
 const PrivateRoute = ({ children, authenticated, path }) => {
   return authenticated ? (

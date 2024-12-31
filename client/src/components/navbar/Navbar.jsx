@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearCart, getTotals } from "../../store/cartSlice";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +38,7 @@ export default function Navbar() {
         >
           <li>
             <a
-              href="#"
+              href="/"
               className="block px-4 py-2 text-gray-600 hover:text-gray-900"
             >
               Home
@@ -70,21 +71,16 @@ export default function Navbar() {
         </ul>
         <div className="hidden md:block ">
           <div className="flex items-center gap-3 ">
-            <button className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700">
-              {/* {totalQuantity} */}
-              {totalQuantity > 0 ? (
-                <span>Cart ({totalQuantity})</span>
-              ) : (
-                <span>Cart</span>
-              )}
-            </button>
-            {/* button to clear cart */}
-            <button
-              className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700"
-              onClick={() => dispatch(clearCart())}
-            >
-              Clear Cart
-            </button>
+            <Link to="/cart" className="">
+              <button className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700">
+                {/* {totalQuantity} */}
+                {totalQuantity > 0 ? (
+                  <span>Cart ({totalQuantity})</span>
+                ) : (
+                  <span>Cart</span>
+                )}
+              </button>
+            </Link>
           </div>
         </div>
       </div>

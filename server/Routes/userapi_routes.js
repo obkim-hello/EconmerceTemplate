@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const bcrypt = require("bcrypt");
 const express = require("express");
 var router = express.Router();
 
@@ -14,6 +14,9 @@ const jwt = require("jsonwebtoken");
 const mongo = require("mongodb");
 const fs = require("fs");
 const path = require("path");
+const User = require("../Model/User");
+const generateAuthToken = require("../utils/generateAuthToken");
+const Joi = require("joi");
 
 var transport = nodemailer.createTransport(
   smtpTransport({
@@ -82,6 +85,68 @@ router.post("/testEmail/", jsonParser, async function (req, res, next) {
 
   //curl -X POST -H "Content-Type: application/json" -d '{"email": " ", "first_name": "John"}' http://localhost:3000/userExpress/testEmail/
 });
+
+// login
+router.post("/login", jsonParser, async function (req, res, next) {
+  const schema = Joi.object({
+    email: Joi.string().min(3).max(200).required().email(),
+    password: Joi.string().min(6).max(200).required(),
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if (error) return res.status(400).send(error.details[0].message);
+  const user = await User.findOne({
+    email: req.body.email,
+  }).select("+password");
+
+  if (!user) return res.status(400).send("Invalid email or password...");
+
+  if (user.password) {
+    console.log("user.password", user);
+    const validPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (!validPassword) {
+      return res.status(400).send("Invalid email or password...");
+    }
+  } else {
+    return res.status(400).send("Invalid email or password...");
+  }
+
+  const token = generateAuthToken(user);
+
+  res.send(token);
+});
+
+// register
+router.post("/register", jsonParser, async function (req, res, next) {
+  // this is a template project , only email and password are for sure required, you can add more fields as needed
+  const userObj = {};
+
+  // loop req.body to add more fields
+  for (const [key, value] of Object.entries(req.body)) {
+    userObj[key] = value;
+  }
+
+  if (!userObj.email || !userObj.password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
+
+  await User.create(userObj)
+    .then((response) => {
+      res.status(200).json({ message: "success", data: response });
+    })
+    .catch((err) => {
+      console.log("err", err);
+      res
+        .status(500)
+        .json({ message: "Internal server error", data: err.message });
+    });
+});
+
+// forgot password
 
 //
 

@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    // required: [true, 'Every user must have a password'],
+    required: [true, 'Every user must have a password'],
     select: false,
   },
   passwordConfirm: {
@@ -33,6 +33,10 @@ const userSchema = new mongoose.Schema({
       },
       message: "Passwords do not match",
     },
+  },
+  resetPasswordToken: {
+    type: String,
+    default: "",
   },
   dateJoined: {
     type: Date,

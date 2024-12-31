@@ -1,8 +1,10 @@
 import React from "react";
 import Navbar from "../../components/navbar/Navbar";
 import ProductCard from "../../components/productCard/productCard";
+import { get_user } from "../../service/decrypt";
 
 export default function Home() {
+  // console.log("Home Page", get_user());
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Navbar */}

@@ -1,7 +1,7 @@
 // import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
 import { sessionReducer, sessionService } from "redux-react-session";
-import cartReducer, { getTotals } from "./cartSlice";
+import cartReducer from "./cartSlice";
 import storage from "redux-persist/lib/storage";
 import {
   persistStore,
