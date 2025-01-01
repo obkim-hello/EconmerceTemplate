@@ -12,9 +12,10 @@ export default (props) => {
       if (authResult["code"]) {
         console.log(authResult.code);
         const result = await googleAuth(authResult.code);
-        console.log(result);
-        await sessionService.saveUser(result.data.toString());
-        await sessionService.saveSession(result.data.toString());
+        // console.log(result.data);
+        const user = result.data;
+        await sessionService.saveSession(user);
+        await sessionService.saveUser(user);
         if (window.location.href.includes("?next=")) {
           const next = window.location.href.split("?next=")[1];
           navigate(next);

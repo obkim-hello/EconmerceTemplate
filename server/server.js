@@ -10,6 +10,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const mongoString = process.env.DATABASE_URL;
 app.use(express.json());
+const fileUpload = require("express-fileupload");
 
 const port = process.env.PORT || 3001; //Line 3
 
@@ -132,10 +133,14 @@ app.use(async function (req, res, next) {
 
 const user = require("./Routes/userapi_routes.js");
 const authRouter = require("./Routes/authRoutes");
+const stripeRouter = require("./Routes/stripe");
+const productRouter = require("./Routes/product_routes");
 app.listen(port, () => console.log(`Listening on port ${port}`)); //Line 6
 // app.use("/", (req, res) => res.send("Hello World!"));
 app.use("/userExpress", user);
 app.use("/auth", authRouter);
+app.use("/stripe", stripeRouter);
+app.use("/productExpress", productRouter);
 
 app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname, "..", "build", "index.html"));

@@ -1,10 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from "./PrivateRoute";
 import { connect } from "react-redux";
 import Home from "../pages/home/home";
 import Cart from "../pages/cart/cart";
 import Login from "../pages/login/login";
+import Register from "../pages/register/register";
+import CheckoutSuccess from "../pages/checkout/checkoutSuccess";
 const pubRoutes = ({ authenticated, checked, user }) => {
   // const nav = useNavigate();
   return (
@@ -18,6 +20,21 @@ const pubRoutes = ({ authenticated, checked, user }) => {
             path="/login"
             caseSensitive={false}
             element={<Login></Login>}
+          />
+
+          <Route
+            path="/register"
+            caseSensitive={false}
+            element={<Register></Register>}
+          />
+          <Route
+            path="/checkout-success"
+            caseSensitive={false}
+            element={
+              <PrivateRoute authenticated={authenticated}>
+                <CheckoutSuccess></CheckoutSuccess>
+              </PrivateRoute>
+            }
           />
 
           {/* <Route

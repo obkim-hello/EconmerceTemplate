@@ -7,6 +7,7 @@ export default function ProductCard(props) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [index] = useState(props.index);
+  const [product] = useState(props.product);
   const handleAddToCart = (product) => {
     dispatch(addItem(product));
     // navigate("/cart");
@@ -15,20 +16,21 @@ export default function ProductCard(props) {
   return (
     <div key={index} className="bg-white shadow-md rounded-md overflow-hidden">
       <img
-        src="https://via.placeholder.com/150"
+        src={product.image}
         alt="Product"
         className="w-full h-48 object-cover"
       />
       <div className="p-4">
-        <h4 className="font-semibold text-gray-800">Product Name</h4>
-        <p className="text-gray-600 mt-2">$99.99</p>
+        <h4 className="font-semibold text-gray-800">{product.name}</h4>
+        <p className="text-gray-600 mt-2">${product.price}</p>
         <button
           className="mt-4 w-full bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700"
           onClick={() => {
             handleAddToCart({
-              id: index,
-              name: "Product Name",
-              price: 99.99,
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: product.image,
               quantity: 1,
             });
           }}

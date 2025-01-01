@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clearCart, getTotals } from "../../store/cartSlice";
 import { Link } from "react-router-dom";
+import { sessionService } from "redux-react-session";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,6 +82,16 @@ export default function Navbar() {
                 )}
               </button>
             </Link>
+            {/* temp logout button */}
+            <button
+              className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+              onClick={() => {
+                sessionService.deleteSession();
+                sessionService.deleteUser();
+              }}
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>

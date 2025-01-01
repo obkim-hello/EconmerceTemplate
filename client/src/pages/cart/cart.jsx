@@ -9,6 +9,7 @@ import {
 import Navbar from "../../components/navbar/Navbar";
 import { globalStore } from "../../store/globalStore";
 import { useNavigate } from "react-router-dom";
+import PayButton from "../../components/PayButton/PayButton";
 
 export default function Cart() {
   const cart = useSelector((state) => state.cart);
@@ -117,12 +118,16 @@ export default function Cart() {
               </button>
             </div>
             <div className="mt-6">
-              <button
-                className="bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-700"
-                onClick={handleCheckout}
-              >
-                Proceed to Checkout
-              </button>
+              {globalStore.getState().session.authenticated ? (
+                <PayButton cartItems={cart.cartItems} />
+              ) : (
+                <button
+                  className="bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-700"
+                  onClick={() => navigate("/login/?next=/cart")}
+                >
+                  Login to Checkout
+                </button>
+              )}
             </div>
           </div>
         )}
