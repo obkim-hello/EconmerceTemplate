@@ -7,6 +7,7 @@ import Cart from "../pages/cart/cart";
 import Login from "../pages/login/login";
 import Register from "../pages/register/register";
 import CheckoutSuccess from "../pages/checkout/checkoutSuccess";
+import AdminPage from "../pages/AdminPages/AdminPage/AdminPage";
 const pubRoutes = ({ authenticated, checked, user }) => {
   // const nav = useNavigate();
   return (
@@ -33,6 +34,16 @@ const pubRoutes = ({ authenticated, checked, user }) => {
             element={
               <PrivateRoute authenticated={authenticated}>
                 <CheckoutSuccess></CheckoutSuccess>
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/admin"
+            caseSensitive={false}
+            element={
+              <PrivateRoute authenticated={authenticated}>
+                <AdminPage></AdminPage>
               </PrivateRoute>
             }
           />
