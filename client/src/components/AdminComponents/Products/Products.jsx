@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../Navbar/Navbar";
+import {
+  TextField,
+  Select,
+  MenuItem,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TablePagination,
+} from "@mui/material";
+
 import product_api from "../../../service/product_api";
 import CreateProductForm from "./CreateProductForm";
 import CreateCategory from "./CreateCategory";
@@ -26,7 +39,15 @@ const Products = () => {
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
-
+  const [categories, setCategories] = useState([]);
+  const fetchCategories = async () => {
+    try {
+      const res = await product_api.getAllCategories();
+      setCategories(res.categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
   const fetchAllProducts = async () => {
     setLoading(true);
     try {
@@ -44,48 +65,6 @@ const Products = () => {
     }
   };
 
-  const handleCreateProduct = async () => {
-    try {
-      const response = await product_api.createProduct(newProduct);
-      console.log("Product created:", response);
-      fetchAllProducts();
-      setNewProduct({
-        name: "",
-        description: "",
-        price: "",
-        stock: "",
-        sku: "",
-        images: [],
-        active: true,
-        tags: "",
-        category: "",
-        specifications: {},
-      });
-    } catch (error) {
-      console.error("Error creating product:", error);
-    }
-  };
-
-  const handleImageUpload = async (productId, files) => {
-    try {
-      const response = await product_api.uploadProductImage(productId, files);
-      console.log("Images uploaded:", response);
-      fetchAllProducts();
-    } catch (error) {
-      console.error("Error uploading images:", error);
-    }
-  };
-
-  const handleDeleteImage = async (key) => {
-    try {
-      const response = await product_api.deleteFileFromS3(key);
-      console.log("Image deleted:", response);
-      fetchAllProducts();
-    } catch (error) {
-      console.error("Error deleting image:", error);
-    }
-  };
-
   const handleDeleteProduct = async (productId) => {
     try {
       const response = await product_api.deleteProductById(productId);
@@ -95,10 +74,34 @@ const Products = () => {
       console.error("Error deleting product:", error);
     }
   };
+  const handlePageChange = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleLimitChange = (event) => {
+    setLimit(event.target.value);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const handleCategoryChange = (event) => {
+    setCategory(event.target.value);
+  };
 
   useEffect(() => {
     fetchAllProducts();
-  }, [page, limit, search, category]);
+    fetchCategories();
+  }, [page, limit, category]);
+
+  useEffect(() => {
+    const debounceFetch = setTimeout(() => {
+      fetchAllProducts();
+    }, 300);
+
+    return () => clearTimeout(debounceFetch);
+  }, [search]);
 
   return (
     <div className="p-4">
@@ -111,6 +114,31 @@ const Products = () => {
       </div>
 
       <div>
+        <div className="flex justify-start items-center gap-4 my-6">
+          <TextField
+            label="Search"
+            value={search}
+            onChange={handleSearchChange}
+            variant="outlined"
+            // margin="normal"
+          />
+          <Select
+            value={category}
+            onChange={handleCategoryChange}
+            displayEmpty
+            variant="outlined"
+            // margin="normal"
+          >
+            <MenuItem value="">
+              <em>All Categories</em>
+            </MenuItem>
+            {categories.map((cat) => (
+              <MenuItem key={cat._id} value={cat._id}>
+                {cat.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </div>
         <h2 className="text-lg font-bold mb-2">Product List</h2>
         {loading ? (
           <p>Loading...</p>
@@ -136,12 +164,22 @@ const Products = () => {
                   </td>
                   <td className="border border-gray-300 p-2">
                     {/* delete product */}
-                    <button
-                      onClick={() => handleDeleteProduct(product._id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded"
-                    >
-                      Delete
-                    </button>
+                    <div className="flex justify-start items-center gap-4">
+                      <button
+                        onClick={() =>
+                          navigate(`/admin/products/${product._id}`)
+                        }
+                        className="bg-blue-500 text-white px-2 py-1 rounded"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProduct(product._id)}
+                        className="bg-red-500 text-white px-2 py-1 rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

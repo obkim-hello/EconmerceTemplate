@@ -31,14 +31,18 @@ export default function Cart() {
   };
 
   const handleDecrementItem = (item) => {
-    dispatch(
+    if (item.quantity === 1) {
+      dispatch(removeItem({ id: item.id }));
+    } else {
+      dispatch(
       decrementItem({
         id: item.id,
         name: item.name,
         price: item.price,
         quantity: 1,
       })
-    );
+      );
+    }
   };
   const handleCheckout = () => {
     if (globalStore.getState().session.authenticated) {
@@ -74,21 +78,35 @@ export default function Cart() {
                 <tbody>
                   {cart.cartItems.map((item) => (
                     <tr key={item.id} className="border-t">
-                      <td className="py-2">{item.name}</td>
-                      <td className="py-2 flex items-center">
-                        <button
-                          className="text-gray-800 px-2 py-1 border rounded hover:bg-gray-200"
-                          onClick={() => handleDecrementItem(item)}
-                        >
-                          -
-                        </button>
-                        <span className="px-4">{item.quantity}</span>
-                        <button
-                          className="text-gray-800 px-2 py-1 border rounded hover:bg-gray-200"
-                          onClick={() => handleIncrementItem(item)}
-                        >
-                          +
-                        </button>
+                      <td className="py-2">
+                        {" "}
+                        <td className="py-2 flex items-center">
+                          <div className="flex items-center">
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-16 h-16 object-cover mr-4"
+                            />
+                            {item.name}
+                          </div>
+                        </td>
+                      </td>
+                      <td className="py-2 ">
+                        <div className="flex items-center h-full">
+                          <button
+                            className="text-gray-800 px-2 py-1 border rounded hover:bg-gray-200"
+                            onClick={() => handleDecrementItem(item)}
+                          >
+                            -
+                          </button>
+                          <span className="px-4">{item.quantity}</span>
+                          <button
+                            className="text-gray-800 px-2 py-1 border rounded hover:bg-gray-200"
+                            onClick={() => handleIncrementItem(item)}
+                          >
+                            +
+                          </button>
+                        </div>
                       </td>
                       <td className="py-2">${item.price.toFixed(2)}</td>
                       <td className="py-2">${item.totalPrice.toFixed(2)}</td>

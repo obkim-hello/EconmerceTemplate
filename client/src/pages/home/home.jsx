@@ -1,39 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import ProductCard from "../../components/productCard/productCard";
 import { get_user } from "../../service/decrypt";
+import productApi from "../../service/product_api";
 
 export default function Home() {
   // console.log("Home Page", get_user());
-  const products = [
-    {
-      id: 1,
-      name: "iPhone 12 Pro",
-      brand: "Apple",
-      desc: "6.1-inch display",
-      price: 999,
-      image:
-        "https://images.unsplash.com/photo-1695048132853-026f93f40f7f?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 2,
-      name: "iPhone 12",
-      brand: "Apple",
-      desc: "5.4-inch mini display",
-      price: 699,
-      image:
-        "https://plus.unsplash.com/premium_photo-1680985551009-05107cd2752c?q=80&w=2664&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-    {
-      id: 3,
-      name: "Galaxy S",
-      brand: "Samsung",
-      desc: "6.5-inch display",
-      price: 399,
-      image:
-        "https://images.unsplash.com/photo-1691449808001-bb8c157f0094?q=80&w=2630&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    },
-  ];
+  const [products, setProducts] = useState({});
+
+  useEffect(() => {
+    productApi
+      .fetchProducts({ page: 1, limit: 10 })
+      .then((products) => {
+        setProducts(products);
+      })
+      .catch((err) => {
+        console.error("Error fetching products:", err);
+      });
+  }, []);
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Navbar */}
@@ -63,7 +47,7 @@ export default function Home() {
           Featured Products
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product, index) => (
+          {products.products?.map((product, index) => (
             // <div
             //   key={index}
             //   className="bg-white shadow-md rounded-md overflow-hidden"
@@ -81,9 +65,7 @@ export default function Home() {
             //     </button>
             //   </div>
             // </div>
-            <ProductCard key={index}
-              product={product}
-            />
+            <ProductCard key={index} product={product} />
           ))}
         </div>
       </section>

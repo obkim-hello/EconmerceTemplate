@@ -128,7 +128,7 @@ router.post(
 );
 
 // route to get a file from S3 with a given key
-router.get("/getfile", async function (req, res, next) {
+router.get("/getfile/:key?", async function (req, res, next) {
   try {
     const params = {
       Bucket: process.env.S3_BUCKET_NAME,
@@ -356,5 +356,85 @@ router.post("/categories", async (req, res) => {
     res.status(400).send(error);
   }
 });
+
+// body will have .keys and Files
+//cross check if keys are less then product.images.length
+//if yes then delete the files
+//if no then add the files
+router.put(
+  "/products/:id/images",
+
+  upload.array("file"),
+  async (req, res) => {
+    try {
+      const product = await Product.findById(req.params.id).exec();
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      console.log("req.body", req.body);
+      console.log("product", product);
+      console.log("req.files", req.files);
+      if (req.body.keys) {
+        //   check if keys is a list if not make it one
+        if (!Array.isArray(req.body.keys)) {
+          req.body.keys = [req.body.keys];
+        }
+        if (req.body.keys.length < product.images.length) {
+          const keysToDelete = product.images.filter(
+            (key) => !req.body.keys.includes(key)
+          );
+          const params = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Delete: {
+              Objects: keysToDelete.map((Key) => ({ Key })),
+            },
+          };
+          await s3Client.send(new DeleteObjectsCommand(params));
+        }
+      }
+      const uploadedFiles = [];
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          const params = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: `product/${req.params.id}/${new Date()
+              .getTime()
+              .toString()}_${file.originalname.replace(/ /g, "-")}`,
+            Body: file.buffer,
+          };
+          await s3Client.send(new PutObjectCommand(params));
+          uploadedFiles.push(params.Key);
+        }
+      }
+
+      // show me what is in uploadedFiles
+      var remainingKeys = [];
+      if (req.body.keys) {
+        remainingKeys = product.images.filter((key) =>
+          req.body.keys.includes(key)
+        );
+      }
+      console.log("remainingKeys", remainingKeys);
+      console.log("uploadedFiles", uploadedFiles);
+
+      joinedKeys = [...remainingKeys, ...uploadedFiles];
+      console.log("joinedKeys", joinedKeys);
+      const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.id,
+        { images: joinedKeys },
+        { new: true }
+      ).exec();
+      res
+        .status(200)
+        .json({ message: "Product images updated", product: updatedProduct });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        message: "Failed to update product images",
+        error: error.message,
+      });
+    }
+  }
+);
 
 module.exports = router;

@@ -13,7 +13,6 @@ const AdminPage = () => {
 
   useEffect(() => {
     const user = get_user(globalStore.getState().session.user);
-    console.log("User -> ", user);
     // only allow admin to access this page
     if (!user || !user.admin) {
       navigate("/home");

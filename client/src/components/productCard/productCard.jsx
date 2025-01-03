@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { addItem } from "../../store/cartSlice";
+import { apiURL } from "../../service/api";
 
 export default function ProductCard(props) {
   const dispatch = useDispatch();
@@ -12,11 +13,12 @@ export default function ProductCard(props) {
     dispatch(addItem(product));
     // navigate("/cart");
   };
+  console.log("ProductCard -> product", product);
 
   return (
     <div key={index} className="bg-white shadow-md rounded-md overflow-hidden">
       <img
-        src={product.image}
+        src={apiURL + "/productExpress/getfile?key=" + product.images[0]}
         alt="Product"
         className="w-full h-48 object-cover"
       />
@@ -27,10 +29,11 @@ export default function ProductCard(props) {
           className="mt-4 w-full bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700"
           onClick={() => {
             handleAddToCart({
-              id: product.id,
+              id: product._id,
               name: product.name,
               price: product.price,
-              image: product.image,
+              image:
+                apiURL + "/productExpress/getfile?key=" + product.images[0],
               quantity: 1,
             });
           }}

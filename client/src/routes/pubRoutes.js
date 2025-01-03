@@ -8,6 +8,7 @@ import Login from "../pages/login/login";
 import Register from "../pages/register/register";
 import CheckoutSuccess from "../pages/checkout/checkoutSuccess";
 import AdminPage from "../pages/AdminPages/AdminPage/AdminPage";
+import ManageSingleProduct from "../pages/AdminPages/ManageSingleProduct";
 const pubRoutes = ({ authenticated, checked, user }) => {
   // const nav = useNavigate();
   return (
@@ -44,6 +45,17 @@ const pubRoutes = ({ authenticated, checked, user }) => {
             element={
               <PrivateRoute authenticated={authenticated}>
                 <AdminPage></AdminPage>
+              </PrivateRoute>
+            }
+          />
+
+          {/* /admin/products/${product._id} */}
+          <Route
+            path="/admin/products/:id"
+            caseSensitive={false}
+            element={
+              <PrivateRoute authenticated={authenticated}>
+                <ManageSingleProduct></ManageSingleProduct>
               </PrivateRoute>
             }
           />

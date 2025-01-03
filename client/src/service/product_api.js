@@ -143,6 +143,37 @@ async function deleteProductById(productId) {
   });
 }
 
+async function updateProductImages(productId, reqBody) {
+  return new Promise((resolve, reject) => {
+    //   make reqBody.images is in const formData = new FormData();
+
+    const formData = new FormData();
+    // reqBody.images.forEach((image) => {
+    //   formData.append("images", image);
+    // });
+    for (let i = 0; i < reqBody.images.length; i++) {
+      formData.append("file", reqBody.images[i]);
+    }
+    for (let i = 0; i < reqBody.keys.length; i++) {
+      formData.append("keys", reqBody.keys[i]);
+    }
+
+    //   if keys or file is not in formData then create a empty array
+    // if (!formData.get("keys")) {
+    //   formData.append("keys", []);
+    // }
+    // if (!formData.get("file")) {
+    //   formData.append("file", []);
+    // }
+    console.log("formData", formData);
+
+    axios
+      .put(`${apiURL}/productExpress/products/${productId}/images`, formData)
+      .then((res) => resolve(res.data))
+      .catch((err) => reject(err));
+  });
+}
+
 const productApi = {
   uploadProductImage,
   getFileFromS3,
@@ -155,6 +186,7 @@ const productApi = {
   getProductById,
   updateProductById,
   deleteProductById,
+  updateProductImages,
 };
 
 export default productApi;
