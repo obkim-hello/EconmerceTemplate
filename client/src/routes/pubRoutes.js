@@ -8,7 +8,9 @@ import Login from "../pages/login/login";
 import Register from "../pages/register/register";
 import CheckoutSuccess from "../pages/checkout/checkoutSuccess";
 import AdminPage from "../pages/AdminPages/AdminPage/AdminPage";
-import ManageSingleProduct from "../pages/AdminPages/ManageSingleProduct";
+import ManageSingleProduct from "../pages/AdminPages/ManageSingleProduct/ManageSingleProduct";
+import NotFound from "../pages/404/404";
+import Profile from "../pages/profile/profile";
 const pubRoutes = ({ authenticated, checked, user }) => {
   // const nav = useNavigate();
   return (
@@ -39,6 +41,17 @@ const pubRoutes = ({ authenticated, checked, user }) => {
             }
           />
 
+          {/* profile */}
+          <Route
+            path="/profile"
+            caseSensitive={false}
+            element={
+              <PrivateRoute authenticated={authenticated}>
+                <Profile></Profile>
+              </PrivateRoute>
+            }
+          />
+
           <Route
             path="/admin"
             caseSensitive={false}
@@ -59,6 +72,9 @@ const pubRoutes = ({ authenticated, checked, user }) => {
               </PrivateRoute>
             }
           />
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound></NotFound>} />
 
           {/* <Route
             path="/vipDetail/:id"

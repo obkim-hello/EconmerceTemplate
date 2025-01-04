@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { get_user } from "../../service/decrypt";
-import { globalStore } from "../../store/globalStore";
+import { get_user } from "../../../service/decrypt";
+import { globalStore } from "../../../store/globalStore";
 import { useNavigate, useParams } from "react-router-dom";
 import Dropzone from "react-dropzone";
 import {
@@ -12,10 +12,9 @@ import {
   InputLabel,
   Checkbox,
   FormControlLabel,
-  Grid,
 } from "@mui/material";
-import productApi from "../../service/product_api";
-import { apiURL } from "../../service/api";
+import productApi from "../../../service/product_api";
+import { apiURL } from "../../../service/api";
 
 export default function ManageSingleProduct() {
   const [files, setFiles] = useState([]);
@@ -140,7 +139,6 @@ export default function ManageSingleProduct() {
           imgObject.keys.push(file);
         }
       });
-      console.log(imgObject);
       await productApi
         .updateProductImages(id, imgObject)
         .then((res) => {
@@ -161,7 +159,7 @@ export default function ManageSingleProduct() {
   if (!product) return <div>Loading...</div>;
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 max-w-3xl">
       <h2 className="text-2xl font-bold">Manage Product</h2>
       <div className="grid grid-cols-1 gap-4">
         <div className="col-span-1">

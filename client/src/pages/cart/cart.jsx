@@ -10,6 +10,20 @@ import Navbar from "../../components/navbar/Navbar";
 import { globalStore } from "../../store/globalStore";
 import { useNavigate } from "react-router-dom";
 import PayButton from "../../components/PayButton/PayButton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  IconButton,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 
 export default function Cart() {
   const cart = useSelector((state) => state.cart);
@@ -35,12 +49,12 @@ export default function Cart() {
       dispatch(removeItem({ id: item.id }));
     } else {
       dispatch(
-      decrementItem({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: 1,
-      })
+        decrementItem({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: 1,
+        })
       );
     }
   };
@@ -63,91 +77,87 @@ export default function Cart() {
         {cart.cartItems.length === 0 ? (
           <p className="text-gray-600">Your cart is empty.</p>
         ) : (
-          <div className="bg-white shadow-md rounded-md p-6">
-            <div className="overflow-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr>
-                    <th className="border-b pb-2">Product</th>
-                    <th className="border-b pb-2">Quantity</th>
-                    <th className="border-b pb-2">Price</th>
-                    <th className="border-b pb-2">Total</th>
-                    <th className="border-b pb-2">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
+          <Paper className="p-6">
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Product</TableCell>
+                    <TableCell>Quantity</TableCell>
+                    <TableCell>Price</TableCell>
+                    <TableCell>Total</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
                   {cart.cartItems.map((item) => (
-                    <tr key={item.id} className="border-t">
-                      <td className="py-2">
-                        {" "}
-                        <td className="py-2 flex items-center">
-                          <div className="flex items-center">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="w-16 h-16 object-cover mr-4"
-                            />
-                            {item.name}
-                          </div>
-                        </td>
-                      </td>
-                      <td className="py-2 ">
-                        <div className="flex items-center h-full">
-                          <button
-                            className="text-gray-800 px-2 py-1 border rounded hover:bg-gray-200"
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <div className="flex items-center">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-16 h-16 object-cover mr-4"
+                          />
+                          {item.name}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <IconButton
                             onClick={() => handleDecrementItem(item)}
                           >
-                            -
-                          </button>
-                          <span className="px-4">{item.quantity}</span>
-                          <button
-                            className="text-gray-800 px-2 py-1 border rounded hover:bg-gray-200"
+                            <RemoveIcon />
+                          </IconButton>
+                          <span>{item.quantity}</span>
+                          <IconButton
                             onClick={() => handleIncrementItem(item)}
                           >
-                            +
-                          </button>
+                            <AddIcon />
+                          </IconButton>
                         </div>
-                      </td>
-                      <td className="py-2">${item.price.toFixed(2)}</td>
-                      <td className="py-2">${item.totalPrice.toFixed(2)}</td>
-                      <td className="py-2">
-                        <button
-                          className="text-red-600 hover:underline"
+                      </TableCell>
+                      <TableCell>${item.price.toFixed(2)}</TableCell>
+                      <TableCell>${item.totalPrice.toFixed(2)}</TableCell>
+                      <TableCell>
+                        <IconButton
                           onClick={() => handleRemoveItem(item.id)}
                         >
-                          Remove
-                        </button>
-                      </td>
-                    </tr>
+                          <DeleteIcon color="error" />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </TableBody>
+              </Table>
+            </TableContainer>
 
             <div className="mt-6 flex justify-between items-center">
               <p className="text-gray-800 font-semibold text-lg">
                 Total: ${cart.totalPrice.toFixed(2)}
               </p>
-              <button
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-500"
+              <Button
+                variant="contained"
+                color="secondary"
                 onClick={handleClearCart}
               >
                 Clear Cart
-              </button>
+              </Button>
             </div>
             <div className="mt-6">
               {globalStore.getState().session.authenticated ? (
                 <PayButton cartItems={cart.cartItems} />
               ) : (
-                <button
-                  className="bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-700"
+                <Button
+                  variant="contained"
+                  color="primary"
                   onClick={() => navigate("/login/?next=/cart")}
                 >
                   Login to Checkout
-                </button>
+                </Button>
               )}
             </div>
-          </div>
+          </Paper>
         )}
       </div>
     </div>

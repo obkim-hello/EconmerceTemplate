@@ -68,6 +68,8 @@ exports.googleAuth = catchAsync(async (req, res, next) => {
     });
   }
 
+  // extra filed for show its a google user
+  user.isGoogleAuth = true;
   const token = generateAuthToken(user);
 
   res.status(200).json(token);

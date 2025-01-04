@@ -8,6 +8,7 @@ const generateAuthToken = (user) => {
       name: user.name,
       email: user.email,
       admin: user.admin,
+      isGoogleAuth: user.isGoogleAuth ? true : false,
     },
     jwtSecretKey
   );

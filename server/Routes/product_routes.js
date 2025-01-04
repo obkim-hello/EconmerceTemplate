@@ -254,7 +254,11 @@ router.get("/products", async (req, res) => {
     const { page = 1, limit = 10, search = "", category = "" } = req.query;
 
     const query = {
-      name: { $regex: search, $options: "i" }, // Case-insensitive search
+      $or: [
+        { name: { $regex: search, $options: "i" } },
+        { sku: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ],
       ...(category && { category }),
     };
 

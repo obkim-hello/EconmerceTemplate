@@ -5,38 +5,32 @@ import {
   TextField,
   Select,
   MenuItem,
-  Button,
+  Pagination,
+  TableContainer,
   Table,
-  TableBody,
-  TableCell,
   TableHead,
+  TableBody,
   TableRow,
-  TablePagination,
+  TableCell,
+  Paper,
+  Button,
+  CircularProgress,
 } from "@mui/material";
 
 import product_api from "../../../service/product_api";
 import CreateProductForm from "./CreateProductForm";
 import CreateCategory from "./CreateCategory";
+import { apiURL } from "../../../service/api";
 
 const Products = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [newProduct, setNewProduct] = useState({
-    name: "",
-    description: "",
-    price: "",
-    stock: "",
-    sku: "",
-    images: [],
-    active: true,
-    tags: "",
-    category: "",
-    specifications: {},
-  });
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
@@ -58,6 +52,8 @@ const Products = () => {
         category,
       });
       setProducts(response.products);
+      setTotalPages(response.pages);
+      setTotalProducts(response.total);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -141,66 +137,114 @@ const Products = () => {
         </div>
         <h2 className="text-lg font-bold mb-2">Product List</h2>
         {loading ? (
-          <p>Loading...</p>
+          <div className="flex justify-center items-center">
+            <CircularProgress />
+          </div>
         ) : (
-          <table className="table-auto w-full border-collapse border border-gray-200">
-            <thead>
-              <tr>
-                <th className="border border-gray-300 p-2">Name</th>
-                <th className="border border-gray-300 p-2">Price</th>
-                <th className="border border-gray-300 p-2">Stock</th>
-                <th className="border border-gray-300 p-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product._id}>
-                  <td className="border border-gray-300 p-2">{product.name}</td>
-                  <td className="border border-gray-300 p-2">
-                    {product.price}
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    {product.stock}
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    {/* delete product */}
-                    <div className="flex justify-start items-center gap-4">
-                      <button
-                        onClick={() =>
-                          navigate(`/admin/products/${product._id}`)
-                        }
-                        className="bg-blue-500 text-white px-2 py-1 rounded"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteProduct(product._id)}
-                        className="bg-red-500 text-white px-2 py-1 rounded"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Price</TableCell>
+                  <TableCell>Stock</TableCell>
+                  <TableCell align="right">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {products.map((product) => (
+                  <TableRow key={product._id}>
+                    <TableCell>
+                      <div className="flex justify-between items-center gap-4">
+                        <div className="flex items-center gap-4">
+                          <img
+                            src={
+                              apiURL +
+                              "/productExpress/getfile?key=" +
+                              product.images[0]
+                            }
+                            alt="Product"
+                            className="w-16 h-16 object-cover rounded-lg"
+                          />
+                          <div>
+                            <p className="text-gray-800 font-semibold">
+                              {product.name}
+                            </p>
+                            <p className="text-gray-500 text-sm">
+                              {product.description}
+                            </p>
+                          </div>
+                        </div>
+                        {/* SKU */}
+                        <div>
+                          <p className="text-gray-800 font-semibold">
+                            SKU: {product.sku}
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>{"$" + product.price}</TableCell>
+                    <TableCell>{product.stock}</TableCell>
+                    <TableCell>
+                      <div className="flex justify-end items-center gap-4">
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() =>
+                            navigate(`/admin/products/${product._id}`)
+                          }
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => handleDeleteProduct(product._id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
-      </div>
 
-      <div className="mt-4">
-        <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          className="bg-gray-300 px-4 py-2 mr-2 rounded"
-        >
-          Previous
-        </button>
-        <button
-          onClick={() => setPage((prev) => prev + 1)}
-          className="bg-gray-300 px-4 py-2 rounded"
-        >
-          Next
-        </button>
+        <div className=" flex justify-between items-center px-4 pt-3 ">
+          {/* number / total */}
+          <div className="flex justify-start items-center gap-3">
+            <select
+              data-testid="display-dropdown-amount"
+              className="text-dsblue-100 text-sm rounded-xl"
+              onChange={(e) => {
+                // setTablePageSize(parseInt(e.target.value));
+                // setTablePageIndex(1);
+                // setIsLoadingTable(true);
+                setLimit(e.target.value);
+              }}
+              value={limit}
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <p className="text-dsblue-100 text-lg">
+              {(page - 1) * limit + 1}-{(page - 1) * limit + products.length} of{" "}
+              {totalProducts}
+            </p>
+          </div>
+          <Pagination
+            variant="outlined"
+            siblingCount={0}
+            count={Math.ceil(totalProducts / limit)}
+            onChange={handlePageChange}
+            rowsPerPage={limit}
+          />
+        </div>
       </div>
     </div>
   );
