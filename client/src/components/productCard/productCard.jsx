@@ -13,7 +13,6 @@ export default function ProductCard(props) {
     dispatch(addItem(product));
     // navigate("/cart");
   };
-  console.log("ProductCard -> product", product);
 
   return (
     <div key={index} className="bg-white shadow-md rounded-md overflow-hidden">

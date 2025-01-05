@@ -10,7 +10,6 @@ import { sessionService } from "redux-react-session";
 import { TextField, Button, Alert } from "@mui/material";
 
 const Login = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -114,6 +113,23 @@ const Login = () => {
               <GoogleLogin></GoogleLogin>
             </div>
           </GoogleOAuthProvider>
+          <div className="mt-4 text-center">
+            <p className="text-gray-600">
+              Don't have an account?{" "}
+              <Button color="primary" onClick={() => navigate("/register")}>
+                Register
+              </Button>
+            </p>
+            <p className="text-gray-600 mt-2">
+              Forgot your password?{" "}
+              <Button
+                color="primary"
+                onClick={() => navigate("/forgetpassword")}
+              >
+                Reset Password
+              </Button>
+            </p>
+          </div>
         </div>
       </div>
     </div>

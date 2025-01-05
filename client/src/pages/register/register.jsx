@@ -1,7 +1,13 @@
 import React, { useState } from "react";
-import { TextField, Button, Typography, Alert } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/navbar/Navbar";
+import user_api from "../../service/user_api";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -11,7 +17,11 @@ export default function Register() {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
-  const [serverError, setServerError] = useState("");
+  const [Message, setMessage] = useState({
+    type: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -30,14 +40,47 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // try {
-      //   await axios.post("/api/register", formData);
-      //   navigate("/login");
-      // } catch (error) {
-      //   setServerError(
-      //     error.response?.data?.message || "An unexpected error occurred"
-      //   );
-      // }
+      try {
+        user_api
+          .register(formData)
+          .then(() => {
+            setLoading(true);
+            setMessage({
+              type: "success",
+              message: "Registration successful, redirecting to login...",
+            });
+            setTimeout(() => {
+              navigate("/login");
+            }, 3000);
+          })
+          .catch((error) => {
+            // setServerError(
+            //   error.response?.data?.data || "An unexpected error occurred"
+            // );
+            setMessage({
+              type: "error",
+              message:
+                error.response?.data?.data || "An unexpected error occurred",
+            });
+            setTimeout(() => {
+              setMessage({
+                type: "",
+                message: "",
+              });
+            }, 3000);
+          });
+      } catch (error) {
+        setMessage({
+          type: "error",
+          message: "An unexpected error occurred",
+        });
+        setTimeout(() => {
+          setMessage({
+            type: "",
+            message: "",
+          });
+        }, 3000);
+      }
     }
   };
 
@@ -54,12 +97,21 @@ export default function Register() {
           Register
         </h2>
         <div className="max-w-sm mx-auto fixed right-10 top-24 flex items-center justify-center">
-          {serverError && (
-            <Alert severity="error" onClose={() => setServerError("")}>
-              {serverError}
+          {Message.message !== "" && (
+            <Alert
+              severity={Message.type}
+              onClose={() =>
+                setMessage({
+                  type: "",
+                  message: "",
+                })
+              }
+            >
+              {Message.message}
             </Alert>
           )}
         </div>
+
         <div className="bg-white shadow-md rounded-md p-6 max-w-sm mx-auto">
           <form
             onSubmit={handleSubmit}
@@ -107,8 +159,19 @@ export default function Register() {
               helperText={errors.confirmPassword}
               fullWidth
             />
-            <Button variant="contained" color="primary" type="submit">
-              Register
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="flex justify-center items-center">
+                  <CircularProgress />
+                </div>
+              ) : (
+                "Register"
+              )}
             </Button>
           </form>
         </div>

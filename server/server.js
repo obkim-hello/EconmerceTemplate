@@ -130,7 +130,6 @@ app.use(async function (req, res, next) {
     }
   }
 });
-
 const user = require("./Routes/userapi_routes.js");
 const authRouter = require("./Routes/authRoutes");
 const stripeRouter = require("./Routes/stripe");
@@ -141,6 +140,8 @@ app.use("/userExpress", user);
 app.use("/auth", authRouter);
 app.use("/stripe", stripeRouter);
 app.use("/productExpress", productRouter);
+
+// log all errors
 
 app.get("/*", function (req, res) {
   res.sendFile(path.join(__dirname, "..", "build", "index.html"));

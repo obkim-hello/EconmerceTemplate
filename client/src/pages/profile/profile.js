@@ -9,7 +9,6 @@ import {
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { get_user } from "../../service/decrypt";
-import { globalStore } from "../../store/globalStore";
 import Navbar from "../../components/navbar/Navbar";
 
 export default function Profile() {

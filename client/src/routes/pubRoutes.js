@@ -11,6 +11,8 @@ import AdminPage from "../pages/AdminPages/AdminPage/AdminPage";
 import ManageSingleProduct from "../pages/AdminPages/ManageSingleProduct/ManageSingleProduct";
 import NotFound from "../pages/404/404";
 import Profile from "../pages/profile/profile";
+import Forgetpassword from "../pages/forgetpassword/forgetpassword";
+import Resetpassword from "../pages/Resetpassword/Resetpassword";
 const pubRoutes = ({ authenticated, checked, user }) => {
   // const nav = useNavigate();
   return (
@@ -25,12 +27,25 @@ const pubRoutes = ({ authenticated, checked, user }) => {
             caseSensitive={false}
             element={<Login></Login>}
           />
-
           <Route
             path="/register"
             caseSensitive={false}
             element={<Register></Register>}
           />
+          {/* Forgetpassword */}
+          <Route
+            path="/forgetpassword"
+            caseSensitive={false}
+            element={<Forgetpassword></Forgetpassword>}
+          />
+
+          {/* resetpassword */}
+          <Route
+            path="/resetpassword/:resetToken"
+            caseSensitive={false}
+            element={<Resetpassword></Resetpassword>}
+          />
+
           <Route
             path="/checkout-success"
             caseSensitive={false}
@@ -40,7 +55,6 @@ const pubRoutes = ({ authenticated, checked, user }) => {
               </PrivateRoute>
             }
           />
-
           {/* profile */}
           <Route
             path="/profile"
@@ -51,7 +65,6 @@ const pubRoutes = ({ authenticated, checked, user }) => {
               </PrivateRoute>
             }
           />
-
           <Route
             path="/admin"
             caseSensitive={false}
@@ -61,7 +74,6 @@ const pubRoutes = ({ authenticated, checked, user }) => {
               </PrivateRoute>
             }
           />
-
           {/* /admin/products/${product._id} */}
           <Route
             path="/admin/products/:id"
@@ -72,10 +84,8 @@ const pubRoutes = ({ authenticated, checked, user }) => {
               </PrivateRoute>
             }
           />
-
           {/* 404 */}
           <Route path="*" element={<NotFound></NotFound>} />
-
           {/* <Route
             path="/vipDetail/:id"
             caseSensitive={false}
@@ -85,7 +95,6 @@ const pubRoutes = ({ authenticated, checked, user }) => {
               </PrivateRoute>
             }
           /> */}
-
           {/* <Route path="*" element={<NotFound></NotFound>} /> */}
         </Routes>
       )}

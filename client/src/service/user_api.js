@@ -25,6 +25,54 @@ async function login(email, password) {
   });
 }
 
-async function register(email, password) {}
+async function register(formData) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${apiURL}/userExpress/register/`, formData)
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
 
-export default { login, register };
+// forget password
+async function forgetPassword(email) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${apiURL}/userExpress/forgotPassword/`, {
+        email: email,
+      })
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+// reset password with resetToken, newPassword
+async function resetPassword(resetToken, newPassword) {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${apiURL}/userExpress/resetPassword/${resetToken}`, {
+        password: newPassword,
+      })
+      .then((res) => {
+        resolve(res.data);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+export default {
+  login,
+  register,
+  forgetPassword,
+  resetPassword,
+};

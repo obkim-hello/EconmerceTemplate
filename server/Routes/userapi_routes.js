@@ -147,7 +147,69 @@ router.post("/register", jsonParser, async function (req, res, next) {
 });
 
 // forgot password
+router.post("/forgotPassword", jsonParser, async function (req, res, next) {
+  const schema = Joi.object({
+    email: Joi.string().min(3).max(200).required().email(),
+  });
 
+  const { error } = schema.validate(req.body);
+
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const user = await User.findOne({
+    email: req.body.email,
+  });
+
+  if (!user) return res.status(400).send("User not found...");
+
+  const resetToken = generateAuthToken(user);
+
+  user.resetPasswordToken = resetToken;
+  await user.save();
+
+  const resetURL = `${process.env.CLIENTURL}/reset-password/${resetToken}`;
+
+  const mailData = {
+    from: process.env.EMAIL,
+    to: user.email,
+    subject: "Password reset",
+    text: `To reset your password, please click the link below:\n${resetURL}`,
+  };
+
+  transport.sendMail(mailData, function (err, info) {
+    if (err) console.log(err);
+    else console.log(info);
+  });
+
+  res.status(200).json({ message: "Email sent" });
+});
+
+// reset password
+router.post(
+  "/resetPassword/:resetToken?",
+  jsonParser,
+  async function (req, res, next) {
+    const schema = Joi.object({
+      password: Joi.string().min(6).max(200).required(),
+    });
+
+    const { error } = schema.validate(req.body);
+
+    if (error) return res.status(400).send(error.details[0].message);
+
+    const user = await User.findOne({
+      resetPasswordToken: req.params.resetToken,
+    });
+
+    if (!user) return res.status(400).send("Invalid token");
+
+    user.password = req.body.password;
+    user.resetPasswordToken = null;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset" });
+  }
+);
 //
 
 module.exports = router;
